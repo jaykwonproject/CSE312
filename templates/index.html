@@ -14,8 +14,12 @@
     <!-- <script src="./script.js"></script> -->
 
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-    
 
+   <form action="{{ url_for('register') }}" method="post">
+    Username: <input type="text" name="username"><br>
+    Password: <input type="text" name="password"><br>
+    <input type="submit" value="Submit">
+</form>
 
     <section class="pink">
       <div class="blob-content">
@@ -68,4 +72,5 @@
 
   </body>
 </html>
+
 
