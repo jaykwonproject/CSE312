@@ -1,3 +1,4 @@
 flask
 flask_sockets
 flask_socketio
+pymongo
