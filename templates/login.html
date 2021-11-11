@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main page</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-  </head>
+</head>
 
-  <h1 class="main">This is Main Page</h1>
-  {{data}}
-  <a href="/login">
-      <button class='login' type="button">Login/Register</button>
-  </a>
+<form action="{{ url_for('checkCredentials') }}" method="post">
+    Username: <input type="text" name="username"><br>
+    Password: <input type="text" name="password"><br>
+    <input type="submit" value="Submit">
+</form>
 
 
 
-  </body>
+
+</body>
 </html>
 
 
