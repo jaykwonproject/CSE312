@@ -18,6 +18,13 @@ def home():
 def login():
     return flask.render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    flask.session['logged_in'] = False
+    flask.session['user'] = ''
+    return flask.redirect(flask.url_for('home'))
+
+
 @app.route('/checkCredentials' , methods=['GET', 'POST'])
 def checkCredentials():
     #client = MongoClient('mongo',27017)

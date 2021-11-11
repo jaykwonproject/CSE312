@@ -9,13 +9,17 @@
   </head>
 
   <h1 class="main">This is Main Page</h1>
-  {{data}}
-  <a href="/login">
-      <button class='login' type="button">Login/Register</button>
-  </a>
 
-
-
+  {% block content %}
+    {% if session['logged_in'] %}
+      <h3>{{data}}</h3>
+      <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login">
+        <button class='login' type="button">Login/Register</button>
+      </a>
+    {% endif %}
+  {% endblock %}
   </body>
 </html>
 
