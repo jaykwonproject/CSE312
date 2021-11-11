@@ -7,21 +7,21 @@
     <title>Main page</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
   </head>
-  <p>------------------------------------</p>
-  {% for i in data %}
-  <p>username: {{i.username}}</p>
-  <p>password: {{i.password}}</p>
-  <p>---------------</p>
-  {% endfor %}
-   <form action="{{ url_for('register') }}" method="post">
-    Username: <input type="text" name="username"><br>
-    Password: <input type="text" name="password"><br>
-    <input type="submit" value="Submit">
-</form>
 
+  <h1 class="main">This is Main Page</h1>
 
-
+  {% block content %}
+    {% if session['logged_in'] %}
+      <h3>{{data}}</h3>
+      <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login">
+        <button class='login' type="button">Login</button>
+      </a>
+      <a href="/register">
+        <button class='register' type="button">Register</button>
+      </a>
+    {% endif %}
+  {% endblock %}
   </body>
 </html>
-
-
