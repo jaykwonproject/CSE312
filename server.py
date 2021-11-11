@@ -43,18 +43,32 @@ def checkCredentials():
         flask.session['user'] = username
         return flask.redirect(flask.url_for('home'))
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    #client = MongoClient('mongo',27017)
+    return flask.render_template('register.html')
+
+@app.route('/checkAvailability', methods=['GET', 'POST'])
+def checkAvailability():
     client = MongoClient('mongodb://localhost:27017')
     db = client.chatDatabase
     collection = db.chatCollection
     username = flask.request.form['username']
     password = flask.request.form['password']
-    collection.insert_one({"username": username, "password": password})
-    client.close()
-    return flask.redirect(flask.url_for('login'))
+    re_password = flask.request.form['re-password']
+    check = collection.count_documents({"username": username})
+    if check != 0:
+        app.logger.info("Duplicated username! Please use another username")
+        return flask.redirect(flask.url_for('register'))
+    
+    elif password != re_password:
+        app.logger.info("Please enter the password agian!")
+        return flask.redirect(flask.url_for('register'))
+
+    else:
+        collection.insert_one({"username": username, "password": password})
+        app.logger.info("Now you are our member!")
+        client.close()
+        return flask.redirect(flask.url_for('login'))
 
 
 @app.route('/<error>')
