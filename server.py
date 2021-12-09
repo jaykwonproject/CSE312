@@ -46,7 +46,6 @@ def chatting():
             else:
                 return flask.render_template('chat.html')
 
-
 @socket_io.on("message")
 def request(message):
     if not flask.session.get('logged_in'):
