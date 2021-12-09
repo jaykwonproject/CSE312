@@ -6,6 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main page</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <style>
+      .center{
+        margin-left: auto;
+        margin-right: auto;
+      }
+      table, th, td {
+        border:1px solid white;
+      }
+      th{
+        text-align: center;
+        width: 100px;
+      }
+      td{
+        text-align: center;
+        width: 200px;
+      }
+      </style>
   </head>
 
   <h1 class="main">This is Main Page</h1>
@@ -13,7 +30,35 @@
   {% block content %}
     {% if session['logged_in'] %}
       <h3>{{data}}</h3>
-      <a href="/logout">Logout</a>
+      {% for elem in posting %}
+        <table class = "center">
+          <tr>
+            <th>Uploader</th>
+            <td>{{elem["uploader"]}}</td>
+          </tr>
+          <tr>
+            <th>Title</th>
+            <td>{{elem["title"]}}</td>
+          </tr>
+          <tr>
+            <th>Content</th>
+            <td>{{elem["content"]}}</td>
+          </tr>
+          <tr>
+            <th>Likes</th>
+            <td>0</td>
+            <td><button class='like' type="button">좋아요</button></td>
+          </tr>
+        </table>
+        <br>
+      {% endfor %}
+      <a href="/posting">
+        <button class='posting' type ="button">Posting</button>
+      </a>
+      <br>
+      <a href="/logout">
+        <button class='logout' type="button">Logout</button>
+      </a>
     {% else %}
       <a href="/login">
         <button class='login' type="button">Login</button>

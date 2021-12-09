@@ -3,6 +3,17 @@ import bcrypt
 from pymongo import MongoClient
 
 app = flask.Flask(__name__)
+postingArr = []
+client = MongoClient('mongo',27017)
+db = client.chatDatabase
+collection = db.postingCollection
+for x in collection.find({}):
+    tmp = {
+            "uploader" : x["Uploder"], 
+            "title" : x["title"],
+            "content" : x["content"]}
+    postingArr.append(tmp)
+client.close()
 
 @app.route('/')
 def home():
@@ -12,8 +23,32 @@ def home():
         if flask.session.get('user') == None:
             return flask.render_template('index.html')
         else:
-            return flask.render_template('index.html', data=flask.session.get('user'))
+            if len(postingArr) != 0 :
+              flask.session['posting'] = postingArr   
+            return flask.render_template('index.html', data=flask.session.get('user'), posting = flask.session.get('posting'))
+            
 
+@app.route('/posting')
+def posting():
+    return flask.render_template('posting.html')
+
+@app.route('/postNewContent', methods=['GET','POST'])
+def postNewContent():
+    client = MongoClient('mongo',27017)
+    db = client.chatDatabase
+    collection = db.postingCollection
+    title = flask.request.form['title']
+    content = flask.request.form['content']
+    if title != "" and content != "":
+        uploader = flask.session['user']
+        collection.insert_one({"Uploder" : uploader ,"title" : title, "content" : content})
+        tmp = {
+            "uploader" : uploader, 
+            "title" : title,
+            "content" : content}
+        postingArr.append(tmp)
+    client.close()
+    return flask.redirect(flask.url_for('home'))
 
 @app.route('/login')
 def login():
