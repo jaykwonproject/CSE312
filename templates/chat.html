@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+</head>
+<body>
+  <script type="text/javascript">
+
+
+    $(document).ready(function(){
+        console.log('http://' + document.domain + ':' + location.port)
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function(){
+                var connect_string = 'new_connect';
+                socket.send(connect_string);
+        });
+
+        socket.on('message', function(msg){
+                if (msg.message != undefined){
+                  const element = document.getElementsByTagName("h3");
+                  if (msg.message.includes('@'+element[0].innerHTML) && element!=msg.username){
+                    alert(msg.username+" mentioned you");
+                  }
+                  $('#messages').append('<li>' + msg.message + '</li>');
+                }
+                if (msg.like != undefined){
+                  $('#likeBtn').text('like +'+msg.like);
+                }
+
+        });
+
+        socket.on('likeCount', function(likeCounts){
+                //let likes = $('#likeBtn').text();
+                //$('#likeBtn').text('like +'+likeCounts.message);
+                socket.send('like');
+        });
+
+        $('#sendbutton').on('click', function(){
+                socket.send($('#myMessage').val());
+                $('#myMessage').val('');
+        });
+
+        $('#likeBtn').on('click', function(){
+                socket.send('like');
+        });
+
+        $("#myMessage").keyup(function(event) {
+            if (event.keyCode === 13) {
+                $("#sendbutton").click();
+            }
+        });
+    });
+
+
+
+  </script>
+  <div class="content">
+    <h2>Logged in as: </h2>
+    <h3>{{data}}</h3>
+    <h2>Online Users: {{onlineUsers|safe}}</h2>
+    <hr>
+    <ul id="messages">{{message|safe}}</ul>
+    <div class="content2">
+      <hr>
+      <input type="text" id="myMessage">
+      <button id="sendbutton">Send</button>
+      <button id="likeBtn">like +{{likes|safe}}</button>
+    </div>
+  </div>
+
+</body>
+</html>

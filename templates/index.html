@@ -6,14 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main page</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
   </head>
 
   <h1 class="main">This is Main Page</h1>
-
   {% block content %}
     {% if session['logged_in'] %}
       <h3>{{data}}</h3>
-      <a href="/logout">Logout</a>
+      <a href="/logout">
+        <button class='logout' type="button">Logout</button>
+      </a>
+      <a href="/chat">
+        <button class='chat' type="button">Chat Room</button>
+      </a>
     {% else %}
       <a href="/login">
         <button class='login' type="button">Login</button>
@@ -23,5 +29,23 @@
       </a>
     {% endif %}
   {% endblock %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        const element = document.getElementsByTagName("h3");
+
+        socket.on('message', function(msg){
+                console.log(msg.message);
+                if (msg.message.includes('@'+element[0].innerHTML)){
+                  alert("DM from "+msg.username+" : "+msg.message);
+                }
+
+        });
+    });
+  </script>
+  {% if session['logged_in'] %}
+    <h2>Online Users: {{onlineUsers|safe}}</h2>
+  {% endif %}
+  <ul id="messages">{{message|safe}}</ul>
   </body>
 </html>

@@ -36,3 +36,29 @@ display:block;
 margin-top: 50px;
 font-size: 1rem;
 }
+
+ul{
+  height: 500px;
+  overflow-y: scroll;
+  scrollbar-color: white #202731;
+}
+
+#myMessage{
+  width: 300px;
+  margin: auto;
+}
+.content {
+  border: ivory;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 5px;
+  max-width: 500px;
+  margin: auto;
+  margin-top: 50px;
+  overflow-y: scroll;
+  scrollbar-color: white #202731;
+}
+
+.content2 {
+  margin: auto;
+}
