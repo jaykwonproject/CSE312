@@ -11,11 +11,15 @@
   </head>
 
   <h1 class="main">This is Main Page</h1>
-
   {% block content %}
     {% if session['logged_in'] %}
       <h3>{{data}}</h3>
-      <a href="/logout">Logout</a>
+      <a href="/logout">
+        <button class='logout' type="button">Logout</button>
+      </a>
+      <a href="/chat">
+        <button class='chat' type="button">Chat Room</button>
+      </a>
     {% else %}
       <a href="/login">
         <button class='login' type="button">Login</button>
@@ -28,19 +32,20 @@
   <script type="text/javascript">
     $(document).ready(function(){
         var socket = io.connect('http://' + document.domain + ':' + location.port);
-        console.log(socket);
         const element = document.getElementsByTagName("h3");
-        console.log("this is " + element[0].innerHTML);
+
         socket.on('message', function(msg){
                 console.log(msg.message);
                 if (msg.message.includes('@'+element[0].innerHTML)){
-                  alert("DM from "+msg.username);
+                  alert("DM from "+msg.username+" : "+msg.message);
                 }
 
         });
     });
   </script>
+  {% if session['logged_in'] %}
+    <h2>Online Users: {{onlineUsers|safe}}</h2>
+  {% endif %}
   <ul id="messages">{{message|safe}}</ul>
-  <script>{{testing|safe}}</script>
   </body>
 </html>

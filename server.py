@@ -5,7 +5,9 @@ from pymongo import MongoClient
 app = flask.Flask(__name__)
 socket_io = SocketIO(app)
 
-
+clients = 0
+likes = 0
+online_users = []
 @app.route('/')
 def home():
     if not flask.session.get('logged_in'):
@@ -14,8 +16,11 @@ def home():
         if flask.session.get('user') == None:
             return flask.render_template('index.html')
         else:
+            global online_users
             name = flask.request.cookies.get('username')
-            return flask.render_template('index.html', data=name)
+            if not online_users.__contains__(name):
+                online_users.append(name)
+            return flask.render_template('index.html', data=name, onlineUsers=online_users)
 
 
 @app.route('/chat')
@@ -26,24 +31,24 @@ def chatting():
         if flask.session.get('user') is None:
             return flask.render_template('index.html')
         else:
+            name = flask.request.cookies.get('username')
             client = MongoClient('mongo', 27017)
             db = client.chatDatabase
             collection = db.chatCollection
             msgs = ''
             check = collection.find({'msg': {'$exists': True}})
-            app.logger.info("HIIIII")
-            app.logger.info(check)
             if check:
                 for x in collection.find({'msg': {'$exists': True}}):
-                    app.logger.info("HELLOOOOO")
-                    app.logger.info(x)
                     username = x['uname']
                     message = x['msg']
                     msgs += f'<li>{username} : {message}</li>'
                 app.logger.info(msgs)
-                return flask.render_template('chat.html', message=msgs)
+                global online_users
+
+                return flask.render_template('chat.html', data=name, message=msgs, onlineUsers=online_users, likes=likes)
             else:
-                return flask.render_template('chat.html')
+                return flask.render_template('chat.html',data=name, likes=likes)
+
 
 @socket_io.on("message")
 def request(message):
@@ -61,6 +66,10 @@ def request(message):
             if message == 'new_connect':
                 to_client['username'] = currentUser
                 to_client['message'] = "welcome " + currentUser
+            elif message == 'like':
+                global likes
+                likes += 1
+                to_client['like'] = likes
             else:
                 to_client['username'] = currentUser
                 to_client['message'] = currentUser + ' : ' + message
@@ -75,11 +84,15 @@ def login():
 
 @app.route('/logout')
 def logout():
+    global online_users
+    name = flask.request.cookies.get('username')
+    online_users.remove(name)
     flask.session['logged_in'] = False
     flask.session['user'] = ''
     resp = flask.redirect(flask.url_for('home'))
     resp.set_cookie('username', value='')
-    return flask.redirect(flask.url_for('home'))
+    flask.session.clear()
+    return resp
 
 
 @app.route('/checkCredentials', methods=['GET', 'POST'])
