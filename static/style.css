@@ -47,6 +47,14 @@ ul{
   width: 300px;
   margin: auto;
 }
+#sendbutton{
+  width: 90px;
+  margin: auto;
+}
+#likeBtn{
+  width: 90px;
+  margin: auto;
+}
 .content {
   border: ivory;
   border-style: solid;
