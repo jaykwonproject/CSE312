@@ -8,14 +8,14 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<form action="{{ url_for('checkCredentials') }}" method="post">
-    Username: <input type="text" name="username"><br>
-    Password: <input type="text" name="password"><br>
-    <input type="submit" value="Submit">
+<form action = "{{url_for('postNewContent')}}" method="post">
+    Title: <input tpye="text" name="title"><br>
+    Content: <input type="text" name="content"><br>
+    <input type="submit" value="Post">
 </form>
-
-<a href="/register">
-    <button class='resiger' type="button">Register</button>
+<br>
+<a href="/">
+    <button class='return' type="button">Return to main page</button>
 </a>
 
 </body>

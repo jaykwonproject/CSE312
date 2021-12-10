@@ -6,9 +6,22 @@ from pymongo import MongoClient
 app = flask.Flask(__name__)
 socket_io = SocketIO(app)
 
+postingArr = []
+client = MongoClient('mongo',27017)
+db = client.chatDatabase
+collection = db.postingCollection
+for x in collection.find({}):
+    tmp = {
+            "uploader" : x["Uploder"], 
+            "title" : x["title"],
+            "content" : x["content"]}
+    postingArr.append(tmp)
+client.close()
+
 clients = 0
 likes = 0
 online_users = []
+
 @app.route('/')
 def home():
     if not flask.session.get('logged_in'):
@@ -21,8 +34,9 @@ def home():
             name = flask.request.cookies.get('username')
             if not online_users.__contains__(name):
                 online_users.append(name)
-            return flask.render_template('index.html', data=name, onlineUsers=online_users)
-
+            if len(postingArr) != 0 :
+              flask.session['posting'] = postingArr   
+            return flask.render_template('index.html', data=name, onlineUsers=online_users, posting = flask.session.get('posting'))
 
 @app.route('/chat')
 def chatting():
@@ -77,6 +91,32 @@ def request(message):
                 collection.insert_one({"uname": currentUser, "msg": message})
             send(to_client, broadcast=True)
 
+            if len(postingArr) != 0 :
+              flask.session['posting'] = postingArr   
+            return flask.render_template('index.html', data=flask.session.get('user'), posting = flask.session.get('posting'))
+ 
+
+@app.route('/posting')
+def posting():
+    return flask.render_template('posting.html')
+
+@app.route('/postNewContent', methods=['GET','POST'])
+def postNewContent():
+    client = MongoClient('mongo',27017)
+    db = client.chatDatabase
+    collection = db.postingCollection
+    title = flask.request.form['title']
+    content = flask.request.form['content']
+    if title != "" and content != "":
+        uploader = flask.session['user']
+        collection.insert_one({"Uploder" : uploader ,"title" : title, "content" : content})
+        tmp = {
+            "uploader" : uploader, 
+            "title" : title,
+            "content" : content}
+        postingArr.append(tmp)
+    client.close()
+    return flask.redirect(flask.url_for('home'))
 
 @app.route('/login')
 def login():
@@ -99,7 +139,6 @@ def logout():
 @app.route('/checkCredentials', methods=['GET', 'POST'])
 def checkCredentials():
     client = MongoClient('mongo',27017)
-    # client = MongoClient('mongodb://localhost:27017')
     db = client.chatDatabase
     collection = db.chatCollection
     username = flask.request.form['username']
