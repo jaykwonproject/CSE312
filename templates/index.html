@@ -37,7 +37,10 @@
         socket.on('message', function(msg){
                 console.log(msg.message);
                 if (msg.message.includes('@'+element[0].innerHTML)){
-                  alert("DM from "+msg.username+" : "+msg.message);
+                  if (window.confirm(msg.username+" mentioned you!\nMessage from "+msg.message +'\nClick OK to Reply'))
+                    {
+                    window.location.href='http://' + document.domain + ':' + location.port+'/chat';
+                    };
                 }
 
         });
