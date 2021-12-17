@@ -41,24 +41,25 @@
         <button class='posting' type ="button">Posting</button>
       </a>
       <br>
-      {% for elem in posting %}
-        <table class = "center">
-          <tr>
-            <th>Uploader</th>
-            <td>{{elem["uploader"]}}</td>
-          </tr>
-          <tr>
-            <th>Title</th>
-            <td>{{elem["title"]}}</td>
-          </tr>
-          <tr>
-            <th>Content</th>
-            <td>{{elem["content"]}}</td>
-          </tr>
-        </table>
-        <br>
-      {% endfor %}
-      
+      {% if posting is defined %}
+        {% for elem in posting %}
+          <table class = "center">
+            <tr>
+              <th>Uploader</th>
+              <td>{{elem["uploader"]}}</td>
+            </tr>
+            <tr>
+              <th>Title</th>
+              <td>{{elem["title"]}}</td>
+            </tr>
+            <tr>
+              <th>Content</th>
+              <td>{{elem["content"]}}</td>
+            </tr>
+          </table>
+          <br>
+        {% endfor %}
+      {% endif %}
     {% else %}
       <a href="/login">
         <button class='login' type="button">Login</button>

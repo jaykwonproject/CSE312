@@ -36,7 +36,9 @@ def home():
                 online_users.append(name)
             if len(postingArr) != 0 :
               flask.session['posting'] = postingArr   
-            return flask.render_template('index.html', data=name, onlineUsers=online_users, posting = flask.session.get('posting'))
+              return flask.render_template('index.html', data=name, onlineUsers=online_users, posting = flask.session.get('posting'))
+            else:
+              return flask.render_template('index.html', data=name, onlineUsers=online_users)
 
 @app.route('/chat')
 def chatting():
@@ -90,11 +92,6 @@ def request(message):
                 to_client['message'] = currentUser + ' : ' + message
                 collection.insert_one({"uname": currentUser, "msg": message})
             send(to_client, broadcast=True)
-
-            if len(postingArr) != 0 :
-              flask.session['posting'] = postingArr   
-            return flask.render_template('index.html', data=flask.session.get('user'), posting = flask.session.get('posting'))
- 
 
 @app.route('/posting')
 def posting():
